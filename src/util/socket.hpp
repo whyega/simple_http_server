@@ -11,7 +11,7 @@ class Socket {
   socket_handle_t socket_;
 
  public:
-  enum class family_t { inet = 4, inet6 = 6 };
+  enum class family_t { inet = 2, inet6 = 6 };
   enum class specification_t { stream = 1 };
   enum class protocol_t { tcp, udp };
 
@@ -19,7 +19,7 @@ class Socket {
   Socket(family_t family, specification_t specification, protocol_t protocol);
   ~Socket();
 
-  bool Bind(const std::string& address, std::uint16_t& port);
+  bool Bind(const std::string& address, std::uint16_t port);
   void Listen();
   Socket Accept();
   std::vector<std::uint8_t> Read(const std::size_t size);

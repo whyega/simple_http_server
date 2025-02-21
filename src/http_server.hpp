@@ -9,7 +9,6 @@ class HttpServer {
  private:
   util::Socket server_socket_;
   std::uint16_t port_;
-  std::string file_;
   std::string file_content_;
 
   void HandleRequest(util::Socket& clientSocket,
