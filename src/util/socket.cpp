@@ -39,7 +39,7 @@ Socket::~Socket() {
   }
 }
 
-bool Socket::Bind(const std::string& address, std::uint16_t port) {
+void Socket::Bind(const std::string& address, std::uint16_t port) {
   struct sockaddr_in server_address;
   server_address.sin_family = static_cast<int>(family_t::inet);
   server_address.sin_port = htons(port);
@@ -47,13 +47,11 @@ bool Socket::Bind(const std::string& address, std::uint16_t port) {
 
   if (inet_pton(static_cast<int>(family_t::inet), address.c_str(),
                 &server_address.sin_addr) <= 0)
-    return false;
+    throw std::runtime_error("Invalid address format");
 
   if (bind(socket_, (struct sockaddr*)&server_address, sizeof(server_address)) <
       0)
-    return false;
-
-  return true;
+    throw std::runtime_error("Failed to bind");
 }
 
 void Socket::Listen() {

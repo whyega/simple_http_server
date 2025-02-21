@@ -19,7 +19,7 @@ class Socket {
   Socket(family_t family, specification_t specification, protocol_t protocol);
   ~Socket();
 
-  bool Bind(const std::string& address, std::uint16_t port);
+  void Bind(const std::string& address, std::uint16_t port);
   void Listen();
   Socket Accept();
   std::vector<std::uint8_t> Read(const std::size_t size);

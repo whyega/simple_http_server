@@ -44,7 +44,7 @@ void HttpServer::HandleRequest(util::Socket& clientSocket,
 void HttpServer::SendResponse(util::Socket& clientSocket,
                               const std::string& headers,
                               const std::string& content) {
-  spdlog::info("Send response: headers -> {} | content -> {}", headers,
+  spdlog::info("Send response: \nHeaders -> {} \nContent -> {}", headers,
                content);
   auto data = headers + content;
   clientSocket.Write({data.begin(), data.end()});
@@ -62,11 +62,11 @@ void HttpServer::Start() {
   while (true) {
     auto client_socket = server_socket_.Accept();
     spdlog::info("Client connected");
+
     try {
       auto data = client_socket.Read(kBufferSize);
-      std::thread(std::bind(&HttpServer::HandleRequest, this,
-                            std::ref(client_socket), std::ref(data)))
-          .detach();
+      // to do: thread pool
+      HandleRequest(client_socket, data);
     } catch (const std::exception& e) {
       spdlog::error("Error handling client: {}", e.what());
     }
