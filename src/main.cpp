@@ -26,9 +26,14 @@ int main(int argc, char* argv[]) {
       throw cxxopts::exceptions::missing_argument("port and file");
     }
 
-    HttpServer server(result["port"].as<std::uint16_t>(),
-                      result["file"].as<std::string>());
-    server.Start();
+    try {
+      HttpServer server(result["port"].as<std::uint16_t>(),
+                        result["file"].as<std::string>());
+      server.Start();
+    } catch (const std::exception& e) {
+      spdlog::error(e.what());
+      return 1;
+    }
   } catch (const cxxopts::exceptions::exception& e) {
     spdlog::error(e.what());
     return 1;

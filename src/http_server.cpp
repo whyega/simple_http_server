@@ -17,6 +17,9 @@ HttpServer::HttpServer(std::uint16_t port, std::string file_path)
                                   util::Socket::specification_t::stream,
                                   util::Socket::protocol_t::tcp)) {
   std::ifstream file(file_);
+  if (!file.is_open()) {
+    throw std::runtime_error("Failed to open file");
+  }
   file_content_ = std::string((std::istreambuf_iterator<char>(file)),
                               std::istreambuf_iterator<char>());
   file.close();
@@ -47,13 +50,20 @@ void HttpServer::SendResponse(util::Socket& clientSocket,
 
 void HttpServer::Start() {
   spdlog::info("Starting server");
-  server_socket_.Bind("127.0.0.1", port_);
-  server_socket_.Listen();
+  try {
+    server_socket_.Bind("127.0.0.1", port_);
+    server_socket_.Listen();
 
-  while (true) {
-    auto client_socket = server_socket_.Accept();
-    spdlog::info("Client connected:");
-    auto data = server_socket_.Read(kBufferSize);
-    std::thread(&HttpServer::HandleRequest, this, client_socket, data).detach();
+    while (true) {
+      auto client_socket = server_socket_.Accept();
+      spdlog::info("Client connected:");
+      auto data = server_socket_.Read(kBufferSize);
+      std::thread(std::bind(&HttpServer::HandleRequest, this,
+                            std::ref(client_socket), std::ref(data)))
+          .detach();
+    }
+  } catch (const std::exception& e) {
+    spdlog::error(e.what());
+    return;
   }
 }
