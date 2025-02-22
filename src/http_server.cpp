@@ -4,17 +4,20 @@
 #include <winsock2.h>
 
 #include <fstream>
+#include <iostream>
 #include <thread>
 
 #include "util/socket.hpp"
+#include "util/thread_pool.hpp"
 
 constexpr std::size_t kBufferSize = 1024;
 
 HttpServer::HttpServer(std::uint16_t port, std::string file_path)
-    : port_(port),
+    : thread_pool_(std::thread::hardware_concurrency()),
       server_socket_(util::Socket(util::Socket::family_t::inet,
                                   util::Socket::specification_t::stream,
-                                  util::Socket::protocol_t::tcp)) {
+                                  util::Socket::protocol_t::tcp)),
+      port_(port) {
   std::ifstream file(file_path);
   if (!file.is_open()) {
     throw std::runtime_error("Failed to open file");
@@ -65,11 +68,10 @@ void HttpServer::Start() {
 
     try {
       auto data = client_socket.Read(kBufferSize);
-      // to do: thread pool
-      std::thread([this, client_socket = std::move(client_socket),
-                   data]() mutable {
-        HandleRequest(client_socket, data);
-      }).detach();
+      thread_pool_.enqueue(
+          [this, client_socket = std::move(client_socket), data]() mutable {
+            HandleRequest(client_socket, data);
+          });
     } catch (const std::exception& e) {
       spdlog::error("Error handling client: {}", e.what());
     }

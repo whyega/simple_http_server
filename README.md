@@ -10,6 +10,7 @@
 ## Структура проекта
 * http_server.hpp и http_server.cpp: Основной код HTTP-сервера.
 * socket.hpp и socket.cpp: Класс Socket для работы с сокетами.
+* thread_pool.hpp и thread_pool.cpp: Класс ThreadPool для работы с пулом потоков.
 * main.cpp: Точка входа в программу, где происходит парсинг аргументов командной строки и запуск сервера.
 * test.py: Скрипт на Python для сборки и запуска сервера.
 * CMakeLists.txt: Файл для сборки проекта с помощью CMake.

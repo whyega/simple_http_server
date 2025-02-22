@@ -4,9 +4,11 @@
 #include <string>
 
 #include "util/socket.hpp"
+#include "util/thread_pool.hpp"
 
 class HttpServer {
  private:
+  util::ThreadPool thread_pool_;
   util::Socket server_socket_;
   std::uint16_t port_;
   std::string file_content_;

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(simple_http_server)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(vendor)
@@ -11,6 +11,7 @@ list(APPEND SIMPLE_HTTP_SERVER_SRC
     src/main.cpp
 
     src/util/socket.cpp
+    src/util/thread_pool.cpp
     src/http_server.cpp
 )
 
