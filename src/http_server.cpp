@@ -4,7 +4,6 @@
 #include <winsock2.h>
 
 #include <fstream>
-#include <iostream>
 #include <thread>
 
 #include "util/socket.hpp"
