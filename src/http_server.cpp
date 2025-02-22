@@ -66,7 +66,10 @@ void HttpServer::Start() {
     try {
       auto data = client_socket.Read(kBufferSize);
       // to do: thread pool
-      HandleRequest(client_socket, data);
+      std::thread([this, client_socket = std::move(client_socket),
+                   data]() mutable {
+        HandleRequest(client_socket, data);
+      }).detach();
     } catch (const std::exception& e) {
       spdlog::error("Error handling client: {}", e.what());
     }

@@ -39,6 +39,28 @@ Socket::~Socket() {
   }
 }
 
+Socket::Socket(Socket&& other) noexcept : socket_(other.socket_) {
+  other.socket_ = 0;  // Обнуляем сокет у исходного объекта
+}
+
+Socket& Socket::operator=(Socket&& other) noexcept {
+  if (this != &other) {  // Проверка на самоприсваивание
+    // Закрываем текущий сокет, если он открыт
+    if (socket_ != 0) {
+#ifdef _WIN32
+      closesocket(socket_);
+#else
+      close(socket_);
+#endif
+    }
+
+    // Перехватываем ресурс
+    socket_ = other.socket_;
+    other.socket_ = 0;  // Обнуляем сокет у исходного объекта
+  }
+  return *this;
+}
+
 void Socket::Bind(const std::string& address, std::uint16_t port) {
   struct sockaddr_in server_address;
   server_address.sin_family = static_cast<int>(family_t::inet);

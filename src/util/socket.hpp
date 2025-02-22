@@ -18,6 +18,10 @@ class Socket {
   Socket() = delete;
   Socket(family_t family, specification_t specification, protocol_t protocol);
   ~Socket();
+  Socket(const Socket&) = delete;
+  Socket& operator=(const Socket&) = delete;
+  Socket(Socket&& other) noexcept;
+  Socket& operator=(Socket&& other) noexcept;
 
   void Bind(const std::string& address, std::uint16_t port);
   void Listen();
