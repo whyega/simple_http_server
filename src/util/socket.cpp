@@ -40,12 +40,11 @@ Socket::~Socket() {
 }
 
 Socket::Socket(Socket&& other) noexcept : socket_(other.socket_) {
-  other.socket_ = 0;  // Обнуляем сокет у исходного объекта
+  other.socket_ = 0;
 }
 
 Socket& Socket::operator=(Socket&& other) noexcept {
-  if (this != &other) {  // Проверка на самоприсваивание
-    // Закрываем текущий сокет, если он открыт
+  if (this != &other) {
     if (socket_ != 0) {
 #ifdef _WIN32
       closesocket(socket_);
@@ -54,9 +53,8 @@ Socket& Socket::operator=(Socket&& other) noexcept {
 #endif
     }
 
-    // Перехватываем ресурс
     socket_ = other.socket_;
-    other.socket_ = 0;  // Обнуляем сокет у исходного объекта
+    other.socket_ = 0;
   }
   return *this;
 }
@@ -65,8 +63,8 @@ void Socket::Bind(const std::string& address, std::uint16_t port) {
   struct sockaddr_in server_address;
   server_address.sin_family = static_cast<int>(family_t::inet);
   server_address.sin_port = htons(port);
-  server_address.sin_addr.s_addr = INADDR_ANY;
 
+  // РўСЂР°РЅСЃС„РѕСЂРјРёСЂСѓРµРј ASCII СЃС‚СЂРѕРєСѓ РІ Р±РёРЅР°СЂРЅС‹Р№ С„РѕСЂРјР°С‚
   if (inet_pton(static_cast<int>(family_t::inet), address.c_str(),
                 &server_address.sin_addr) <= 0)
     throw std::runtime_error("Invalid address format");
